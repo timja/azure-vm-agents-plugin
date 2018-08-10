@@ -300,6 +300,7 @@ public final class AzureVMManagementServiceDelegate {
                 boolean isImageParameterValid = checkImageParameter(template);
                 if (isImageParameterValid) {
                     String imageVersion = StringUtils.isNotEmpty(template.getImageVersion()) ? template.getImageVersion() : "latest";
+                    LOGGER.log(Level.INFO, "image reference version: " + imageVersion);
                     VirtualMachineImage image = azureClient.virtualMachineImages().getImage(locationName,
                             template.getImagePublisher(), template.getImageOffer(), template.getImageSku(), imageVersion);
                     if (image != null) {
