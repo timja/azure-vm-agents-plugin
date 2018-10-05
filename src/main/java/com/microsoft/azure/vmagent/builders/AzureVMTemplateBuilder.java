@@ -87,7 +87,6 @@ public class AzureVMTemplateBuilder extends AzureVMTemplateFluent<AzureVMTemplat
                 fluent.getBuiltInImage().isInstallDocker(),
                 fluent.getAdvancedImage().getOsType(),
                 fluent.getImageTopLevelType(),
-                false,
                 new AzureVMAgentTemplate.ImageReferenceTypeClass(fluent.getAdvancedImage().getImage(),
                         fluent.getAdvancedImage().getImageId(),
                         fluent.getAdvancedImage().getImagePublisher(),
@@ -108,7 +107,6 @@ public class AzureVMTemplateBuilder extends AzureVMTemplateFluent<AzureVMTemplat
                 fluent.getRetentionStrategy(),
                 fluent.isShutdownOnIdle(),
                 fluent.getAdvancedImage().isTemplateDisabled(),
-                null,
                 fluent.getAdvancedImage().isExecuteInitScriptAsRoot(),
                 fluent.getAdvancedImage().isDoNotUseMachineIfInitFails());
     }

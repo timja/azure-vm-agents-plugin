@@ -29,6 +29,7 @@ import com.microsoft.azure.management.resources.DeploymentOperation;
 import com.microsoft.azure.management.resources.ResourceGroup;
 import com.microsoft.azure.util.AzureCredentials;
 import com.microsoft.azure.util.AzureMsiCredentials;
+import com.microsoft.azure.util.Messages;
 import com.microsoft.azure.vmagent.exceptions.AzureCloudException;
 import com.microsoft.azure.vmagent.remote.AzureVMAgentSSHLauncher;
 import com.microsoft.azure.vmagent.util.AzureClientHolder;
@@ -64,7 +65,6 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -81,6 +81,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
 
 import static com.microsoft.azure.vmagent.util.Constants.MILLIS_IN_SECOND;
 import static hudson.init.InitMilestone.PLUGINS_STARTED;
@@ -134,27 +135,6 @@ public class AzureVMCloud extends Cloud {
     }
 
     @DataBoundConstructor
-    public AzureVMCloud(
-            String cloudName,
-            String id,
-            String azureCredentialsId,
-            String maxVirtualMachinesLimit,
-            String deploymentTimeout,
-            String resourceGroupReferenceType,
-            String newResourceGroupName,
-            String existingResourceGroupName,
-            List<AzureVMAgentTemplate> vmTemplates) {
-        this(
-                cloudName,
-                azureCredentialsId,
-                maxVirtualMachinesLimit,
-                deploymentTimeout,
-                resourceGroupReferenceType,
-                newResourceGroupName,
-                existingResourceGroupName,
-                vmTemplates);
-    }
-
     public AzureVMCloud(
             String cloudName,
             String azureCredentialsId,
