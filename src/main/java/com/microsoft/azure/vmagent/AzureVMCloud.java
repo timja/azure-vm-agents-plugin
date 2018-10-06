@@ -29,7 +29,6 @@ import com.microsoft.azure.management.resources.DeploymentOperation;
 import com.microsoft.azure.management.resources.ResourceGroup;
 import com.microsoft.azure.util.AzureCredentials;
 import com.microsoft.azure.util.AzureMsiCredentials;
-import com.microsoft.azure.util.Messages;
 import com.microsoft.azure.vmagent.exceptions.AzureCloudException;
 import com.microsoft.azure.vmagent.remote.AzureVMAgentSSHLauncher;
 import com.microsoft.azure.vmagent.util.AzureClientHolder;

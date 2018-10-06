@@ -1,0 +1,47 @@
+jenkins:
+  clouds:
+    - azureVM:
+        azureCredentialsId: aServicePrincipal
+        cloudName: test-cloud
+        deploymentTimeout: 1200
+        maxVirtualMachinesLimit: 10
+        newResourceGroupName: aNewRg
+        resourceGroupReferenceType: new
+        vmTemplates:
+          - templateName: azure-jenkins-agents
+            templateDesc: Azure vm cloud agents
+            labels: ''
+            location: Japan West
+            virtualMachineSize: Standard_A0
+            storageAccountNameReferenceType: new
+            storageAccountType: Standard_LRS
+            newStorageAccountName: asdsadasdsa
+            diskType: managed
+            noOfParallelJobs: 4
+            usageMode: Use this node as much as possible
+            builtInImage: ''
+            isInstallGit: false
+            isInstallMaven: false
+            isInstallDocker: false
+            osType: Linux
+            imageTopLevelType: advanced
+            imageReferenceTypeClass:
+              imageId: >-
+                /subscriptions/f80e968e-6dfe-404f-930f-aeeb131e7f2c/resourceGroups/an-rg/providers/Microsoft.Compute/images/image-name
+            agentLaunchMethod: SSH
+            preInstallSsh: true
+            initScript: echo hi
+            virtualNetworkName: a-vnet
+            virtualNetworkResourceGroupName: a-vnet-rg
+            subnetName: a-subnet
+            usePrivateIP: true
+            nsgName: ''
+            agentWorkspace: /var/jenkins
+            jvmOptions: '-Xms4G -Xmx4G'
+            retentionStrategy:
+              idleTerminationMinutes: 60
+            shutdownOnIdle: false
+            templateDisabled: false
+            executeInitScriptAsRoot: true
+            doNotUseMachineIfInitFails: true
+            credentialsId: adminCredentialId
