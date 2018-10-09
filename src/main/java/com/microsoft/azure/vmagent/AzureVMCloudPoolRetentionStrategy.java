@@ -9,6 +9,7 @@ import hudson.slaves.Cloud;
 import hudson.slaves.RetentionStrategy;
 import hudson.util.TimeUnit2;
 import jenkins.model.Jenkins;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.util.Arrays;
@@ -173,9 +174,10 @@ public class AzureVMCloudPoolRetentionStrategy extends AzureVMCloudBaseRetention
         return DESCRIPTOR;
     }
 
-    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+    @Extension
+    @Symbol("azureVMCloudPoolRetentionStrategy")
     public static class DescriptorImpl extends Descriptor<RetentionStrategy<?>> {
 
         @Override
