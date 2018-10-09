@@ -1,9 +1,9 @@
 package com.microsoft.azure.vmagent.builders;
 
-import com.microsoft.azure.vmagent.AzureVMCloudBaseRetentionStrategy;
 import com.microsoft.azure.vmagent.AzureVMCloudPoolRetentionStrategy;
 import com.microsoft.azure.vmagent.AzureVMCloudRetensionStrategy;
 import com.microsoft.azure.vmagent.util.Constants;
+import hudson.slaves.RetentionStrategy;
 
 public class AzureVMTemplateFluent<T extends AzureVMTemplateFluent<T>> {
 
@@ -29,7 +29,7 @@ public class AzureVMTemplateFluent<T extends AzureVMTemplateFluent<T>> {
 
     private String existingStorageAccountName;
 
-    private AzureVMCloudBaseRetentionStrategy retentionStrategy;
+    private RetentionStrategy retentionStrategy;
 
     private boolean shutdownOnIdle;
 
@@ -110,7 +110,7 @@ public class AzureVMTemplateFluent<T extends AzureVMTemplateFluent<T>> {
         return (T) this;
     }
 
-    public T withRetentionStrategy(AzureVMCloudBaseRetentionStrategy retentionStrategy) {
+    public T withRetentionStrategy(RetentionStrategy retentionStrategy) {
         this.retentionStrategy = retentionStrategy;
         return (T) this;
     }
@@ -214,7 +214,7 @@ public class AzureVMTemplateFluent<T extends AzureVMTemplateFluent<T>> {
         return existingStorageAccountName;
     }
 
-    public AzureVMCloudBaseRetentionStrategy getRetentionStrategy() {
+    public RetentionStrategy getRetentionStrategy() {
         return retentionStrategy;
     }
 

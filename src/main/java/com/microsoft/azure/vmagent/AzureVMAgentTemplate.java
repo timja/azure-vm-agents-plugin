@@ -52,8 +52,6 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
-import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -67,6 +65,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * This class defines the configuration of Azure instance templates.
@@ -227,7 +227,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
 
     private boolean doNotUseMachineIfInitFails;
 
-    private AzureVMCloudBaseRetentionStrategy retentionStrategy;
+    private RetentionStrategy retentionStrategy;
 
     @DataBoundConstructor
     public AzureVMAgentTemplate(
@@ -261,7 +261,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
             String nsgName,
             String agentWorkspace,
             String jvmOptions,
-            AzureVMCloudBaseRetentionStrategy retentionStrategy,
+            RetentionStrategy retentionStrategy,
             boolean shutdownOnIdle,
             boolean templateDisabled,
             boolean executeInitScriptAsRoot,
@@ -809,7 +809,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         return labelDataSet;
     }
 
-    public AzureVMCloudBaseRetentionStrategy getRetentionStrategy() {
+    public RetentionStrategy getRetentionStrategy() {
         return retentionStrategy;
     }
 

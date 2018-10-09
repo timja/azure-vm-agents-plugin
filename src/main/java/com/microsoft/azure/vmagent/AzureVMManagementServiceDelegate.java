@@ -22,7 +22,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.microsoft.azure.PagedList;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.compute.*;
+import com.microsoft.azure.management.compute.OperatingSystemTypes;
+import com.microsoft.azure.management.compute.PowerState;
+import com.microsoft.azure.management.compute.PurchasePlan;
+import com.microsoft.azure.management.compute.VirtualMachine;
+import com.microsoft.azure.management.compute.VirtualMachineCustomImage;
+import com.microsoft.azure.management.compute.VirtualMachineImage;
+import com.microsoft.azure.management.compute.VirtualMachineOffer;
+import com.microsoft.azure.management.compute.VirtualMachinePublisher;
+import com.microsoft.azure.management.compute.VirtualMachineSize;
+import com.microsoft.azure.management.compute.VirtualMachineSku;
 import com.microsoft.azure.management.network.Network;
 import com.microsoft.azure.management.network.NetworkSecurityGroup;
 import com.microsoft.azure.management.network.PublicIPAddress;
@@ -30,7 +39,11 @@ import com.microsoft.azure.management.resources.DeploymentMode;
 import com.microsoft.azure.management.resources.GenericResource;
 import com.microsoft.azure.management.resources.fluentcore.arm.ExpandableStringEnum;
 import com.microsoft.azure.management.resources.fluentcore.arm.Region;
-import com.microsoft.azure.management.storage.*;
+import com.microsoft.azure.management.storage.CheckNameAvailabilityResult;
+import com.microsoft.azure.management.storage.Reason;
+import com.microsoft.azure.management.storage.SkuName;
+import com.microsoft.azure.management.storage.StorageAccount;
+import com.microsoft.azure.management.storage.StorageAccountKey;
 import com.microsoft.azure.storage.AccessCondition;
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
@@ -41,8 +54,14 @@ import com.microsoft.azure.storage.core.PathUtility;
 import com.microsoft.azure.vmagent.exceptions.AzureCloudException;
 import com.microsoft.azure.vmagent.retry.ExponentialRetryStrategy;
 import com.microsoft.azure.vmagent.retry.NoRetryStrategy;
-import com.microsoft.azure.vmagent.util.*;
+import com.microsoft.azure.vmagent.util.AzureUtil;
+import com.microsoft.azure.vmagent.util.CleanUpAction;
+import com.microsoft.azure.vmagent.util.Constants;
+import com.microsoft.azure.vmagent.util.ExecutionEngine;
+import com.microsoft.azure.vmagent.util.FailureStage;
+import com.microsoft.azure.vmagent.util.LocationCache;
 import hudson.model.Descriptor.FormException;
+import hudson.slaves.RetentionStrategy;
 import jenkins.model.Jenkins;
 import jenkins.slaves.JnlpSlaveAgentProtocol;
 import org.apache.commons.io.IOUtils;
@@ -54,8 +73,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -1805,7 +1836,7 @@ public final class AzureVMManagementServiceDelegate {
             String virtualNetworkName,
             String virtualNetworkResourceGroupName,
             String subnetName,
-            AzureVMCloudBaseRetentionStrategy retentionStrategy,
+            RetentionStrategy retentionStrategy,
             String jvmOptions,
             String resourceGroupName,
             boolean returnOnSingleError,
@@ -2037,7 +2068,7 @@ public final class AzureVMManagementServiceDelegate {
         }
     }
 
-    public static String verifyRetentionTime(AzureVMCloudBaseRetentionStrategy retentionStrategy) {
+    public static String verifyRetentionTime(RetentionStrategy retentionStrategy) {
         try {
             if (retentionStrategy == null) {
                 return Messages.Azure_GC_Template_RT_Null_Or_Empty();
