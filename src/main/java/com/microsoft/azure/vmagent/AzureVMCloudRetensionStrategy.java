@@ -23,6 +23,7 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.slaves.RetentionStrategy;
 import hudson.util.TimeUnit2;
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import java.util.logging.Level;
@@ -155,9 +156,10 @@ public class AzureVMCloudRetensionStrategy extends AzureVMCloudBaseRetentionStra
         return DESCRIPTOR;
     }
 
-    @Extension
     public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
+    @Extension
+    @Symbol("azureVMCloudRetentionStrategy")
     public static class DescriptorImpl extends Descriptor<RetentionStrategy<?>> {
         @Override
         public String getDisplayName() {

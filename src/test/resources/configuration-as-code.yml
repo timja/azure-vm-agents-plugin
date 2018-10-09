@@ -39,7 +39,8 @@ jenkins:
             agentWorkspace: /var/jenkins
             jvmOptions: '-Xms4G -Xmx4G'
             retentionStrategy:
-              idleTerminationMinutes: 60
+              azureVMCloudRetentionStrategy:
+                idleTerminationMinutes: 60
             shutdownOnIdle: false
             templateDisabled: false
             executeInitScriptAsRoot: true
