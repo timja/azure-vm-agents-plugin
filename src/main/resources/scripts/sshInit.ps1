@@ -1,7 +1,7 @@
 Set-ExecutionPolicy Unrestricted
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-$source = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v0.0.16.0/OpenSSH-Win64.zip"
+$source = "https://github.com/PowerShell/Win32-OpenSSH/releases/download/v9.8.1.0p1-Preview/OpenSSH-Win64.zip"
 $destination = "C:\OpenSSH-Win64.zip"
 $webClient = New-Object System.Net.WebClient
 $webClient.DownloadFile($source, $destination)
@@ -40,6 +40,6 @@ Set-Location $dir
 Start-Service ssh-agent
 Start-Service sshd
 
-New-NetFirewallRule -Protocol TCP -LocalPort 22 -Direction Inbound -Action Allow -DisplayName SSH
+New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server (sshd)' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
 Set-Service sshd -StartupType Automatic
 Set-Service ssh-agent -StartupType Automatic
