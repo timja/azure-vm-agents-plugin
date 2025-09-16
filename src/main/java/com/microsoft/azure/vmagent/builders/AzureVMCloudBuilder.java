@@ -1,5 +1,6 @@
 package com.microsoft.azure.vmagent.builders;
 
+import com.microsoft.azure.vmagent.AzureVMAgentBaseTemplate;
 import com.microsoft.azure.vmagent.AzureVMAgentTemplate;
 import com.microsoft.azure.vmagent.AzureVMCloud;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,7 @@ public class AzureVMCloudBuilder {
 
     private String existingResourceGroupName;
 
-    private List<AzureVMAgentTemplate> vmTemplates;
+    private List<AzureVMAgentBaseTemplate> vmTemplates;
 
     public AzureVMCloudBuilder() {
         maxVirtualMachinesLimit = "10";

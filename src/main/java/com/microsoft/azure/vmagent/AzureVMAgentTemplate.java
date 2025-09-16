@@ -100,7 +100,7 @@ import org.kohsuke.stapler.verb.POST;
  *
  * @author Suresh Nallamilli
  */
-public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, Serializable {
+public class AzureVMAgentTemplate extends AzureVMAgentBaseTemplate implements Describable<AzureVMAgentTemplate>, Serializable {
     private static final long serialVersionUID = 1574325692L;
 
     public static class ImageReferenceTypeClass implements Serializable {
@@ -257,7 +257,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
             + "gallerySubscriptionId: {33}";
 
     // General Configuration
-    private final String templateName;
 
     private final String templateDesc;
 
@@ -288,8 +287,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
     private String storageAccountType;
 
     private String osDiskStorageAccountType;
-
-    private final int noOfParallelJobs;
 
     private Node.Mode usageMode;
 
@@ -338,8 +335,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
 
     private String subnetName;
 
-    private boolean usePrivateIP;
-
     private boolean spotInstance;
 
     private boolean acceleratedNetworking;
@@ -354,15 +349,9 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
     // If disabled, will not attempt to verify or use
     private boolean templateDisabled;
 
-    private transient String templateStatusDetails;
-
     private transient AzureVMCloud azureCloud;
 
-    private transient Set<LabelAtom> labelDataSet;
-
     private boolean templateVerified;
-
-    private transient ProvisionStrategy templateProvisionStrategy;
 
     private boolean executeInitScriptAsRoot;
 
@@ -382,8 +371,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
     private int maximumDeploymentSize;
 
     private List<AzureTagPair> tags;
-
-    private int maxVirtualMachinesLimit;
 
     private String licenseType;
 
@@ -405,7 +392,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
             String newStorageAccountName,
             String existingStorageAccountName,
             String diskType,
-            String noOfParallelJobs,
+            int noOfParallelJobs,
             Node.Mode usageMode,
             String osType,
             String imageTopLevelType,
@@ -424,7 +411,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
             boolean executeInitScriptAsRoot,
             boolean doNotUseMachineIfInitFails
     ) {
-        this.templateName = templateName;
+        super(templateName);
         this.templateDesc = templateDesc;
         this.labels = labels;
         this.location = location;
@@ -441,13 +428,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         this.storageAccountNameReferenceType = storageAccountNameReferenceType;
         this.diskType = diskType;
 
-        if (StringUtils.isBlank(noOfParallelJobs) || !noOfParallelJobs.matches(Constants.REG_EX_DIGIT)
-                || noOfParallelJobs.
-                trim().equals("0")) {
-            this.noOfParallelJobs = 1;
-        } else {
-            this.noOfParallelJobs = Integer.parseInt(noOfParallelJobs);
-        }
         setUsageMode(usageMode);
         this.imageTopLevelType = imageTopLevelType;
         this.imageReference = imageReference;
@@ -468,13 +448,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         this.executeInitScriptAsRoot = executeInitScriptAsRoot;
         this.doNotUseMachineIfInitFails = doNotUseMachineIfInitFails;
         this.templateStatusDetails = "";
-
-        // Reset the template verification status.
-        this.templateProvisionStrategy = new ProvisionStrategy();
         this.retentionStrategy = retentionStrategy;
-
-        // Forms data which is not persisted
-        labelDataSet = Label.parse(labels);
 
         this.tags = new ArrayList<>();
     }
@@ -596,16 +570,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         return imageReference != null ? imageReference.getVersion() : null;
     }
 
-
-    public int getMaxVirtualMachinesLimit() {
-        return maxVirtualMachinesLimit;
-    }
-
-    @DataBoundSetter
-    public void setMaxVirtualMachinesLimit(int maxVirtualMachinesLimit) {
-        this.maxVirtualMachinesLimit = maxVirtualMachinesLimit;
-    }
-
     public boolean isUseEntraIdForStorageAccount() {
         return useEntraIdForStorageAccount;
     }
@@ -724,7 +688,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         templateProperties.put("virtualNetworkName", template.getVirtualNetworkName());
         templateProperties.put("virtualNetworkResourceGroupName", template.getVirtualNetworkResourceGroupName());
         templateProperties.put("subnetName", template.getSubnetName());
-        templateProperties.put("usePrivateIP", template.getUsePrivateIP());
+        templateProperties.put("usePrivateIP", template.isUsePrivateIP());
         templateProperties.put("nsgName", template.getNsgName());
         templateProperties.put("jvmOptions",
                 isBasic ? "" : template.getJvmOptions());
@@ -822,9 +786,9 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
     }
 
     @SuppressWarnings("ConstantConditions") // fields are assigned by xstream
-    private Object readResolve() {
+    protected Object readResolve() {
+        super.readResolve();
         labelDataSet = Label.parse(labels);
-        templateProvisionStrategy = new ProvisionStrategy();
 
         if (StringUtils.isBlank(storageAccountType)) {
             storageAccountType = SkuName.STANDARD_LRS.toString();
@@ -862,10 +826,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
 
         if (StringUtils.isBlank(diskType)) {
             diskType = Constants.DISK_UNMANAGED;
-        }
-
-        if (retentionStrategy == null) {
-            retentionStrategy = new AzureVMCloudRetensionStrategy(0);
         }
 
         if (imageReference == null) {
@@ -1105,15 +1065,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         this.subnetName = subnetName;
     }
 
-    @DataBoundSetter
-    public void setUsePrivateIP(boolean usePrivateIP) {
-        this.usePrivateIP = usePrivateIP;
-    }
-
-    public boolean getUsePrivateIP() {
-        return usePrivateIP;
-    }
-
     public String getNsgName() {
         return nsgName;
     }
@@ -1124,10 +1075,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
 
     public String getJvmOptions() {
         return jvmOptions;
-    }
-
-    public AzureVMCloud retrieveAzureCloudReference() {
-        return azureCloud;
     }
 
     public void addAzureCloudReference(AzureVMCloud cloud) {
@@ -1153,29 +1100,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         return noOfParallelJobs;
     }
 
-    public ProvisionStrategy getTemplateProvisionStrategy() {
-        return templateProvisionStrategy;
-    }
-
-    public void setTemplateProvisionStrategy(ProvisionStrategy templateProvisionStrategy) {
-        this.templateProvisionStrategy = templateProvisionStrategy;
-    }
-
-    /**
-     * Returns true if this template is disabled and cannot be used, false
-     * otherwise.
-     *
-     * @return True/false
-     */
-    public boolean isTemplateDisabled() {
-        return this.templateDisabled;
-    }
-
-    @DataBoundSetter
-    public void setTemplateDisabled(boolean templateDisabled) {
-        this.templateDisabled = templateDisabled;
-    }
-
     /**
      * Is the template set up and verified?
      *
@@ -1192,19 +1116,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
      */
     public void setTemplateVerified(boolean isValid) {
         templateVerified = isValid;
-    }
-
-    public String getTemplateStatusDetails() {
-        return templateStatusDetails;
-    }
-
-    public void setTemplateStatusDetails(String templateStatusDetails) {
-        this.templateStatusDetails = templateStatusDetails;
-    }
-
-    public String getResourceGroupName() {
-        // Allow overriding?
-        return retrieveAzureCloudReference().getResourceGroupName();
     }
 
     public String getResourceGroupReferenceType() {
@@ -1295,7 +1206,7 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
                 .withVirtualNetworkName(getVirtualNetworkName())
                 .withVirtualNetworkResourceGroupName(getVirtualNetworkResourceGroupName())
                 .withSubnetName(getSubnetName())
-                .withUsePrivateIP(getUsePrivateIP())
+                .withUsePrivateIP(isUsePrivateIP())
                 .withNetworkSecurityGroupName(getNsgName())
                 .withJvmOptions(getJvmOptions())
                 .withDisableTemplate(isTemplateDisabled())
@@ -1321,10 +1232,6 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         return Jenkins.get().getDescriptor(getClass());
     }
 
-    public Set<LabelAtom> getLabelDataSet() {
-        return labelDataSet;
-    }
-
     public RetentionStrategy getRetentionStrategy() {
         return retentionStrategy;
     }
@@ -1347,34 +1254,13 @@ public class AzureVMAgentTemplate implements Describable<AzureVMAgentTemplate>, 
         this.licenseType = licenseType;
     }
 
-    /**
-     * Provision new agents using this template.
-     *
-     * @param listener       Not used
-     * @param numberOfAgents Number of agents to provision
-     * @return New deployment info if the provisioning was successful.
-     * @throws Exception May throw if provisioning was not successful.
-     */
-    public AzureVMDeploymentInfo provisionAgents(TaskListener listener, int numberOfAgents) throws Exception {
+    @Override
+    public AzureVMDeploymentInfo provisionAgents(int numberOfAgents) throws Exception {
         return getServiceDelegate().createDeployment(this, numberOfAgents);
     }
 
     private AzureVMManagementServiceDelegate getServiceDelegate() {
         return retrieveAzureCloudReference().getServiceDelegate();
-    }
-
-    /**
-     * If provisioning failed, handle the status and queue the template for
-     * verification.
-     *
-     * @param message     Failure message
-     * @param failureStep Stage that failure occurred
-     */
-    public void handleTemplateProvisioningFailure(String message, FailureStage failureStep) {
-        // Set as failed, waiting for the next interval
-        templateProvisionStrategy.failure();
-        // Set the details so that it's easier to see what's going on from the configuration UI.
-        setTemplateStatusDetails(message);
     }
 
     /**

@@ -67,14 +67,14 @@ public class AzureVMCloudPoolRetentionStrategy extends AzureVMCloudBaseRetention
         AzureVMCloud currentCloud = (AzureVMCloud) cloud;
         AzureVMAgentTemplate currentTemplate = null;
         boolean isContainsTemplate = false;
-        for (AzureVMAgentTemplate template : currentCloud.getVmTemplates()) {
-            if (template.getRetentionStrategy() instanceof AzureVMCloudPoolRetentionStrategy
-                    && TemplateUtil.checkSame(template, agentNode.getTemplate())) {
-                isContainsTemplate = true;
-                currentTemplate = template;
-                break;
-            }
-        }
+//        for (AzureVMAgentBaseTemplate template : currentCloud.getVmTemplates()) {
+//            if (template.getRetentionStrategy() instanceof AzureVMCloudPoolRetentionStrategy
+//                    && TemplateUtil.checkSame(template, agentNode.getTemplate())) {
+//                isContainsTemplate = true;
+//                currentTemplate = template;
+//                break;
+//            }
+//        }
 
         if (!isContainsTemplate) {
             //template has changed

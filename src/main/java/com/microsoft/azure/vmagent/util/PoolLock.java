@@ -1,5 +1,6 @@
 package com.microsoft.azure.vmagent.util;
 
+import com.microsoft.azure.vmagent.AzureVMAgentBaseTemplate;
 import com.microsoft.azure.vmagent.AzureVMAgentTemplate;
 
 import java.util.HashMap;
@@ -7,9 +8,9 @@ import java.util.Map;
 
 public final class PoolLock {
 
-    private static Map<AzureVMAgentTemplate, Integer> templateProvisionLock = new HashMap<>();
+    private static final Map<AzureVMAgentBaseTemplate, Integer> templateProvisionLock = new HashMap<>();
 
-    public static synchronized void provisionLock(AzureVMAgentTemplate template) {
+    public static synchronized void provisionLock(AzureVMAgentBaseTemplate template) {
         Integer value = templateProvisionLock.get(template);
         if (value == null) {
             value = 0;
@@ -17,7 +18,7 @@ public final class PoolLock {
         templateProvisionLock.put(template, value + 1);
     }
 
-    public static synchronized void provisionUnlock(AzureVMAgentTemplate template) {
+    public static synchronized void provisionUnlock(AzureVMAgentBaseTemplate template) {
         Integer value = templateProvisionLock.get(template);
         if (value != null) {
             value = value - 1;
@@ -29,7 +30,7 @@ public final class PoolLock {
         }
     }
 
-    public static synchronized boolean checkProvisionLock(AzureVMAgentTemplate template) {
+    public static synchronized boolean checkProvisionLock(AzureVMAgentBaseTemplate template) {
         return templateProvisionLock.containsKey(template);
     }
 

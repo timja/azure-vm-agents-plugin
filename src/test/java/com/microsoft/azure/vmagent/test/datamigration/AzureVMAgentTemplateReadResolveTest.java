@@ -28,7 +28,7 @@ class AzureVMAgentTemplateReadResolveTest {
 
         assertThat(cloud.getVmTemplates(), hasSize(1));
 
-        AzureVMAgentTemplate template = cloud.getVmTemplates().get(0);
+        AzureVMAgentTemplate template = (AzureVMAgentTemplate) cloud.getVmTemplates().get(0);
         assertThat(template.getAdvancedImageInside().getSshConfig(), is("RemoteForward 1234 target.machine:1234"));
     }
 }

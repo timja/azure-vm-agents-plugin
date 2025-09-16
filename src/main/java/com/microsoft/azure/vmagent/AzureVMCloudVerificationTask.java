@@ -53,7 +53,7 @@ public final class AzureVMCloudVerificationTask extends AsyncPeriodicWork {
                     new Object[]{templateName, cloudName});
             return;
         }
-        final AzureVMAgentTemplate agentTemplate = cloud.getAzureAgentTemplate(templateName);
+        final AzureVMAgentBaseTemplate agentTemplate = cloud.getAzureAgentTemplate(templateName);
         if (agentTemplate == null) {
             LOGGER.log(getStaticNormalLoggingLevel(),
                     "AzureVMCloudVerificationTask: verify: "

@@ -43,7 +43,7 @@ class AdvancedConfigAsCodeTest {
         assertThat(cloud.getResourceGroupReferenceType(), is("existing"));
 
         // vmTemplate
-        AzureVMAgentTemplate template = cloud.getVmTemplates().get(0);
+        AzureVMAgentTemplate template = (AzureVMAgentTemplate) cloud.getVmTemplates().get(0);
 
         assertThat(template.getLauncher(), instanceOf(AzureSSHLauncher.class));
         assertThat(template.getBuiltInImage(), is("Windows Server 2016"));
@@ -89,7 +89,7 @@ class AdvancedConfigAsCodeTest {
         assertThat(template.getTemplateName(), is("azure"));
 
         assertThat(template.getUsageMode(), is(Node.Mode.NORMAL));
-        assertThat(template.getUsePrivateIP(), is(true));
+        assertThat(template.isUsePrivateIP(), is(true));
 
         assertThat(template.getVirtualMachineSize(), is("Standard_A2"));
     }

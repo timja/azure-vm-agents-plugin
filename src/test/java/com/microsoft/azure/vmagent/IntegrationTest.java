@@ -422,7 +422,7 @@ class IntegrationTest {
         when(templateMock.getVirtualMachineSize()).thenReturn(testEnv.azureImageSize);
         when(templateMock.getVMCredentials()).thenReturn(vmCredentials);
         when(templateMock.retrieveAzureCloudReference()).thenReturn(cloudMock);
-        when(templateMock.getUsePrivateIP()).thenReturn(!usePrivateIP);
+        when(templateMock.isUsePrivateIP()).thenReturn(!usePrivateIP);
         when(templateMock.getNsgName()).thenReturn(nsgName);
         when(templateMock.getStorageAccountType()).thenReturn(storageType);
         when(templateMock.getOsDiskStorageAccountType()).thenReturn(storageType);

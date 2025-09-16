@@ -21,6 +21,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
 import com.jcraft.jsch.*;
 import com.microsoft.azure.vmagent.AzureVMAgent;
+import com.microsoft.azure.vmagent.AzureVMAgentBaseTemplate;
 import com.microsoft.azure.vmagent.AzureVMAgentTemplate;
 import com.microsoft.azure.vmagent.AzureVMCloud;
 import com.microsoft.azure.vmagent.AzureVMComputer;
@@ -486,7 +487,7 @@ public class AzureVMAgentSSHLauncher extends ComputerLauncher {
         // Queue the template for verification in case something happened there.
         AzureVMCloud azureCloud = agent.getCloud();
         if (azureCloud != null) {
-            AzureVMAgentTemplate agentTemplate = azureCloud.getAzureAgentTemplate(agent.getTemplateName());
+            AzureVMAgentBaseTemplate agentTemplate = azureCloud.getAzureAgentTemplate(agent.getTemplateName());
             if (agentTemplate != null) {
                 agentTemplate.handleTemplateProvisioningFailure(message, FailureStage.POSTPROVISIONING);
             }

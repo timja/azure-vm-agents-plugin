@@ -1,0 +1,24 @@
+<div>
+    <p>Controls how Jenkins starts this agent.</p>
+    <p><strong>Launch agents via SSH</strong></p>
+    <p>Required on Windows only: Ensure either your Virtual Machine image includes SSH pre-installed or you select the
+        Pre-Install SSH in Windows Agent option below</p>
+
+    <p><strong>Launch agents by connecting it to the controller</strong></p>
+    <p>
+        Allows an agent to be connected to the Jenkins controller whenever it is ready.
+        The agent machine will establish a connection to the Jenkins controller from the agenrt.
+        This means that the agent does not need to be reachable from the controller; the agent just needs to be able to
+        reach the controller.
+    </p>
+
+    <p>
+        The created Virtual Machine needs to automatically connect to Jenkins on startup. This can be achieved by
+        installing the Jenkins agent as a service using the <em>Initialization script</em> in the <em>VM first startup configuration</em>.
+        The following scripts are provided to help you with this:
+    </p>
+    <ul>
+        <li><a href="https://github.com/jenkinsci/azure-vm-agents-plugin/blob/master/docs/init-scripts/linux-inbound-agent.sh">Linux</a>
+        <li><a href="https://github.com/jenkinsci/azure-vm-agents-plugin/blob/master/docs/init-scripts/windows-inbound-agent.ps1">Windows</a>
+    </ul>
+</div>

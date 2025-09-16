@@ -103,7 +103,7 @@ public class AzureVMTemplateBuilder extends AzureVMTemplateFluent<AzureVMTemplat
                 fluent.getNewStorageAccountName(),
                 fluent.getExistingStorageAccountName(),
                 fluent.getDiskType(),
-                fluent.getAdvancedImage().getNoOfParallelJobs(),
+                Integer.parseInt(fluent.getAdvancedImage().getNoOfParallelJobs()),
                 fluent.getUsageMode(),
                 fluent.getAdvancedImage().getOsType(),
                 fluent.getImageTopLevelType(),

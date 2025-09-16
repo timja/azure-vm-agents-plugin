@@ -44,7 +44,7 @@ class BasicConfigAsCodeTest {
         assertThat(cloud.getResourceGroupReferenceType(), is("new"));
 
         // vmTemplate
-        AzureVMAgentTemplate template = cloud.getVmTemplates().get(0);
+        AzureVMAgentTemplate template = (AzureVMAgentTemplate) cloud.getVmTemplates().get(0);
 
         assertThat(template.getLauncher(), instanceOf(AzureSSHLauncher.class));
         assertThat(template.getBuiltInImage(), is("Ubuntu 16.14 LTS"));
@@ -87,7 +87,7 @@ class BasicConfigAsCodeTest {
         assertThat(template.getTemplateName(), is("ubuntu"));
 
         assertThat(template.getUsageMode(), is(Node.Mode.NORMAL));
-        assertThat(template.getUsePrivateIP(), is(false));
+        assertThat(template.isUsePrivateIP(), is(false));
 
         assertThat(template.getVirtualMachineSize(), is("Standard_DS2_v2"));
 

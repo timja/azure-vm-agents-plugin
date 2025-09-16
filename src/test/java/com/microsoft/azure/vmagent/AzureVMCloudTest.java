@@ -280,7 +280,7 @@ class AzureVMCloudTest {
     }
 
     private static AzureVMAgentTemplate mkTemplate(final String templateName) {
-        return new AzureVMAgentTemplate(templateName, null, null, null, null, null, null, null, null, null, null, null,
+        return new AzureVMAgentTemplate(templateName, null, null, null, null, null, null, null, null, null, null, 0,
                 null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, false, false);
     }
 

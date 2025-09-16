@@ -24,7 +24,7 @@ public class AzureVMMaintainPoolTask extends AsyncPeriodicWork {
         super("Azure VM Maintainer Pool Size");
     }
 
-    public void maintain(AzureVMCloud cloud, AzureVMAgentTemplate template) {
+    public void maintain(AzureVMCloud cloud, AzureVMAgentBaseTemplate template) {
         LOGGER.log(getNormalLoggingLevel(), "Starting to maintain template: {0}", template.getTemplateName());
         int currentSize = 0;
         final int sizeLimit = ((AzureVMCloudPoolRetentionStrategy) template.getRetentionStrategy()).getPoolSize();
@@ -35,12 +35,10 @@ public class AzureVMMaintainPoolTask extends AsyncPeriodicWork {
         }
 
         for (Computer computer : Jenkins.get().getComputers()) {
-            if (computer instanceof AzureVMComputer) {
-                AzureVMComputer azureVMComputer = (AzureVMComputer) computer;
+            if (computer instanceof AzureVMComputer azureVMComputer) {
                 AzureVMAgent agent = azureVMComputer.getNode();
                 if (agent != null
-                        && agent.getTemplate().getTemplateName().equals(template.getTemplateName())
-                        && TemplateUtil.checkSame(agent.getTemplate(), template)) {
+                        && agent.getTemplate().getTemplateName().equals(template.getTemplateName())) {
                     currentSize++;
                 }
             }
@@ -48,16 +46,18 @@ public class AzureVMMaintainPoolTask extends AsyncPeriodicWork {
         if (currentSize < sizeLimit) {
             // Determine how many nodes to provision
             int deploymentSize = sizeLimit - currentSize;
-            if (template.getMaximumDeploymentSize() > 0 && deploymentSize > template.getMaximumDeploymentSize()) {
-                deploymentSize = template.getMaximumDeploymentSize();
+            if (template instanceof AzureVMAgentTemplate vmAgentTemplate) {
+                if (vmAgentTemplate.getMaximumDeploymentSize() > 0 && deploymentSize > vmAgentTemplate.getMaximumDeploymentSize()) {
+                    deploymentSize = vmAgentTemplate.getMaximumDeploymentSize();
+                }
             }
-            LOGGER.log(getNormalLoggingLevel(), "Prepare for provisioning {0} agents for template {1}",
-                    new Object[]{deploymentSize, template.getTemplateName()});
-            provisionNodes(cloud, template, deploymentSize);
+                LOGGER.log(getNormalLoggingLevel(), "Prepare for provisioning {0} agents for template {1}",
+                        new Object[]{deploymentSize, template.getTemplateName()});
+                provisionNodes(cloud, template, deploymentSize);
         }
     }
 
-    public void provisionNodes(AzureVMCloud cloud, AzureVMAgentTemplate template, int newAgents) {
+    public void provisionNodes(AzureVMCloud cloud, AzureVMAgentBaseTemplate template, int newAgents) {
         if (!template.getTemplateProvisionStrategy().isVerifiedPass()) {
             AzureVMCloudVerificationTask.verify(cloud.getCloudName(), template.getTemplateName());
         }
@@ -78,7 +78,7 @@ public class AzureVMMaintainPoolTask extends AsyncPeriodicWork {
         for (Cloud cloud : Jenkins.get().clouds) {
             if (cloud instanceof AzureVMCloud) {
                 AzureVMCloud azureVMCloud = (AzureVMCloud) cloud;
-                for (AzureVMAgentTemplate template : azureVMCloud.getVmTemplates()) {
+                for (AzureVMAgentBaseTemplate template : azureVMCloud.getVmTemplates()) {
                     if (template.getRetentionStrategy() instanceof AzureVMCloudPoolRetentionStrategy) {
                         maintain(azureVMCloud, template);
                     }

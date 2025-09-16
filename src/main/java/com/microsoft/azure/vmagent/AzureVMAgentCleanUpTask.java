@@ -454,9 +454,10 @@ public class AzureVMAgentCleanUpTask extends AsyncPeriodicWork {
                     azureClient.genericResources().deleteById(resource.id());
                     if (osDiskURI != null) {
                         String jenkinsTemplateTag = resource.tags().get(Constants.AZURE_TEMPLATE_TAG_NAME);
-                        boolean useEntraIdForStorageAccount = cloud
-                                .getTemplate(jenkinsTemplateTag)
-                                .isUseEntraIdForStorageAccount();
+                        AzureVMAgentBaseTemplate template = cloud
+                                .getTemplate(jenkinsTemplateTag);
+                        boolean useEntraIdForStorageAccount = template instanceof AzureVMAgentTemplate vmTemplate &&
+                                vmTemplate.isUseEntraIdForStorageAccount();
                         serviceDelegate.removeStorageBlob(osDiskURI, resourceGroup,
                                 cloud.getAzureCredentialsId(), useEntraIdForStorageAccount);
                     }

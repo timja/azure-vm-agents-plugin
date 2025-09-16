@@ -1180,7 +1180,7 @@ public final class AzureVMManagementServiceDelegate {
      *
      */
     public void setVirtualMachineDetails(
-            AzureVMAgent azureAgent, AzureVMAgentTemplate template) throws AzureCloudException {
+            AzureVMAgent azureAgent, AzureVMAgentBaseTemplate template) throws AzureCloudException {
 
         VirtualMachine vm =
                 azureClient.virtualMachines().getByResourceGroup(template.getResourceGroupName(), azureAgent.getNodeName());
@@ -1190,7 +1190,7 @@ public final class AzureVMManagementServiceDelegate {
         String publicIPStr = "";
         String privateIP = vm.getPrimaryNetworkInterface().primaryPrivateIP();
         String fqdn;
-        if (publicIP == null || template.getUsePrivateIP()) {
+        if (publicIP == null || template.isUsePrivateIP()) {
             fqdn = privateIP;
             LOGGER.log(Level.INFO, "The Azure agent doesn't have a public IP or usePrivateIP is set. Will use the private IP");
         } else {

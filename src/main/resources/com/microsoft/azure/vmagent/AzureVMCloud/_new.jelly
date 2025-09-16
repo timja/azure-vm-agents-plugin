@@ -10,7 +10,7 @@
       <f:form method="post" action="doCreate" name="config" class="jenkins-form">
         <!-- main body of the configuration -->
 
-        <j:set var="descriptor" value="${it.templateDescriptor}"/>
+        <j:set var="descriptor" value="${it.scaleSetDescriptor}"/>
         <st:include class="${descriptor.clazz}" page="config.jelly"/>
         <l:isAdmin>
           <f:bottomButtonBar>

@@ -745,7 +745,10 @@ public class AzureVMAgent extends AbstractCloudSlave implements TrackedItem {
                 AzureVMCloud azureVMCloud = getCloud();
                 AzureVMManagementServiceDelegate serviceDelegate = this.getServiceDelegate();
                 if (azureVMCloud != null && serviceDelegate != null) {
-                    serviceDelegate.attachPublicIP(this, azureVMCloud.getAzureAgentTemplate(templateName));
+                    AzureVMAgentBaseTemplate azureAgentTemplate = azureVMCloud.getAzureAgentTemplate(templateName);
+                    if (azureAgentTemplate instanceof AzureVMAgentTemplate vmTemplate) {
+                        serviceDelegate.attachPublicIP(this, vmTemplate);
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE,
